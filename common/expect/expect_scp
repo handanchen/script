@@ -1,0 +1,25 @@
+#!/usr/bin/expect -f
+
+# scp自动传输文件
+
+if {$argc != 5} {
+  send "usage:./expect_scp \$host \$user \$password \$src_file \$tar_file\n"
+  exit 1
+}
+
+set host [lindex $argv 0]
+set user [lindex $argv 1]
+set password [lindex $argv 2]
+set src_file [lindex $argv 3]
+set tar_file [lindex $argv 4]
+
+set timeout 60
+
+spawn scp $src_file $user@$host:$tar_file
+
+expect {
+  "*yes/no*" { send "yes\r" }
+  "*password:*" { send "$password\r" }
+}
+expect "100%"
+expect eof

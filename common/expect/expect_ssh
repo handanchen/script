@@ -1,0 +1,21 @@
+#!/usr/bin/expect -f
+
+# ssh自动执行远程命令
+
+if {$argc != 4} {
+  send "usage:./expect_ssh \$host \$user \$password \$cmd\n"
+  exit 1
+}
+
+set host [lindex $argv 0]
+set user [lindex $argv 1]
+set password [lindex $argv 2]
+set cmd [lindex $argv 3]
+set timeout 60
+spawn ssh $user@$host
+expect {
+  "*yes/no*" { send "yes\r"; exp_continue }
+  "*password:*" { send "$password\r"; exp_continue }
+}
+send "$cmd\r"
+expect eof
